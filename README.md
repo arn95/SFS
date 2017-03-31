@@ -20,13 +20,15 @@ The Serenity File System is currently written as a simulation of a file system. 
 
 This system has no caching or buffering. As soon as all changes to a block are determined, that block is written to disk (i.e. saved in the char* array). When data is read in, it is by block. In this case, reading in data from disk means copying it over from the char* array to a new array.
 
+*Setup*: Block 0 is the superblock, block 1 is the inode bitmap, block 2 is the data bitmap, blocks 3-7 are for inodes, and blocks 8-255 are for data. Blocks are of size 128 bytes.
+
 *Details:* The Serenity File System is based on the Very Simple File System, with some note-able exceptions. Below we describe those differences only. If you need reminders on the VSFS, see OSTEP chapter 40, or your OS notes.
 
 *Bitmaps:* Although there is space allocated in the disk for bitmaps, the current SFS does not use them. Instead, since nothing is ever removed, the superblock has a counter for how many blocks are used for inodes and datablocks, which then denotes the next available block.
 
 *Block choice:* The first available block is always the one assigned when a block is needed. There is no freelist.
 
-*Directory structure:* Each directory entry is slightly simplified from the VSFS. Instead of having a record length, each record is of fixed length. There is still a length for the name, of course, since most names will not take up the entire record length. 
+*Directory structure:* Each directory entry is slightly simplified from the VSFS. Instead of having a record length, each record is of fixed length. There is still a length for the name, of course, since most names will not take up the entire record length. The rest is the same as VSFS.
 
 *Directories:* Currently the file system only supports 1 directory, the root directory. The root directory’s inumber is stored in the sfs_disk struct.
 
@@ -34,12 +36,12 @@ This system has no caching or buffering. As soon as all changes to a block are d
 
 *File length:* Currently files are limited to using 1 block of space, although the inode structure does have space for direct pointers to more than one block.
 
+*Inodes:* Inodes keep track of the following: file type (file or directory only), size of file in bytes, the number of used blocks, and an array of direct pointers to blocks. In this system, the direct pointer is an integer hold the block's number.
+
 ## DESCRIPTION OF THE CODE
 There are no known bugs in the provided code, other than the fact that the listed functionality is missing. The code is organized into a few different sets of structs and functions. There are FIXME comments in areas where code should be added first to get a function working, with TODO comments in areas that should be worked on after the FIXME areas. 
 
-Use the makefile to compile your code (type “make” on the commandline). It will create a program named sfs.
-
-Throughout the code a pointer to the disk is passed among functions instead of being a global variable. Although that is the case, the main function that acts as the user program should never directly interact with the disk, but only call the functions in files.c. Each .c file represents a set of related functions:
+Throughout the code a pointer to the disk is passed among functions instead of being a global variable. Although that is the case, the main function that acts as the user program should never directly interact with the disk, but only call the functions in files.c or directory.c. Each .c file represents a set of related functions:
 
 Sfs.h:
 * Includes all global parameters, structs, and function headers
@@ -55,7 +57,7 @@ Disk.h:
 
 Superblock.c:
 * Functions for initializing or interacting with the superblock
-* Note that format and mount exist here. For a real file system they would be separate, but we need them to initialize each time we run the program.
+* Note that format and mount exist here. For a real file system they would be separate, but we need them to initialize each time we run the program since we are a simulation.
 
 Inode.c
 * Functions for interacting with an inode
@@ -64,10 +66,11 @@ Inode.c
 Directory.c
 * Functions for interacting with a directory
 * Note that this includes a print function that may be handy for debugging, although it won’t work correctly until you fully implement directories.
+* The only functions here that would be called directly by a program using your file system are mkdir and rm.
 
 Files.c
 * Functions for interacting with files. 
-* These are the ONLY functions that a program would call to interact with your file system. 
+* These are the main functions that a program would call to interact with your file system. 
 
 Test.c
 * Main function is in this file
@@ -96,9 +99,7 @@ Currently you can open multiple new files but the root directory is never update
 
 
 ## DESCRIPTION OF ADDITIONAL CHANGES
-For many of these changes you must provide additional test cases that demonstrate that they are working correctly.
-
-``` int sfs_seek(struct sfs_disk* disk, int filedes, int offset, int option); ```
+For many of these changes you may wish to provide additional test cases that demonstrate that they are working correctly.
 
 **A - Being able to have more than 1 directory**
 
@@ -154,3 +155,5 @@ To save the current state of your simulated disk to a real file on your computer
 **F - Being able to seek to a specific location in a file (such as with lseek)**
 
 A program interacting with your file system may wish to move to a different location in a file than the current offset. A seek function will provide that functionality. Your seek function must be able to deal with 3 options similar to what lseek deals with: move a certain distance from the current offset, move a certain distance after the start of the file, and move a certain distance before the end of the file (this last one is different from lseek). Your function should return an error value and not change the offset if moving to the specified location is outside the bounds of the file. Your code should be in the function:
+
+``` int sfs_seek(struct sfs_disk* disk, int filedes, int offset, int option); ```
