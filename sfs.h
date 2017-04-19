@@ -77,8 +77,8 @@ int sfs_mount(struct sfs_disk* disk, char* dump_file_name);
 int sfs_read_super(struct sfs_disk* disk);
 int sfs_write_super(struct sfs_disk* disk, struct sfs_super* super);
 void sfs_print_super(struct sfs_super* super);
-uint8_t sfs_get_free_block(struct sfs_disk* disk);
-uint8_t sfs_get_free_inode_index(struct sfs_disk* disk);
+int sfs_get_free_block(struct sfs_disk* disk);
+int sfs_get_free_inode_index(struct sfs_disk* disk);
 int sfs_dump(struct sfs_disk* disk, char* dump_file_name);
 
 // inode functions

@@ -6,9 +6,25 @@ This assignment is a simulation of a file system.
 ## Working
 The parts that have been added and work correctly:
 
+All the required code is implemented.
+
+Implemented:
+A. Dirs able to hold more than 1 file.
+B. Inode and Data block distribution is done entirely through bitmaps.
+D. Files able to use more than 1 block of data (dir inodes and file inodes)
+F. Seeking to different parts of the file
+
+Note: I added bitmap.c/.h and filepath.c/.h
 
 ## Not Working
 The parts that have been added and don't quite work correctly, with information on what seems to be wrong with them:
+
+Path resolving is not entirely functional. If you want to create a file given a path it wont work correctly.
+The root inode being able to hold a dir entry of itself is weird and I tried to fix it but it meant changing how this assignment is organized.
+I am not sure what the issue is exactly. I kept getting segfaults and I spent a lot of time debugging.
+It could be that the inodes are not being chained correctly.
+Finding files in nested directories works totally fine as well as actually creating them. When it comes to accessing them its weird.
+
 
 # ----- Ellie and Dan’s Notes on the SFS ------
 In these notes you will find the following: an overall description of the SFS system, a description of the code and how it is organized, descriptions of each of the required changes, and descriptions for each of the additional changes.

@@ -17,6 +17,8 @@ int sfs_read_inode(struct sfs_disk* disk, int index, struct sfs_inode* inode)
         disk_read(disk->data, block, offset+1, &inode->size, 2);
         disk_read(disk->data, block, offset+3, &inode->used_blocks, 1);
         disk_read(disk->data, block, offset+4, &inode->block, SFS_BLOCKS_PER_INODE);
+
+        return 1;
 }
 
 /* Write inode at the specified index from the inode struct */
@@ -30,6 +32,8 @@ int sfs_write_inode(struct sfs_disk* disk, int index, struct sfs_inode* inode)
         disk_write(disk->data, block, offset+1, &inode->size, 2);
         disk_write(disk->data, block, offset+3, &inode->used_blocks, 1);
         disk_write(disk->data, block, offset+4, &inode->block, SFS_BLOCKS_PER_INODE);
+
+        return 1;
 }
 
 /* Print out an inode's type, size, and list of data blocks. */

@@ -1,4 +1,4 @@
-OBJS=test.o files.o directory.o inode.o superblock.o
+OBJS=test.o files.o directory.o inode.o superblock.o bitmap.o filepath.o
 CFLAGS=-g -I.  -std=c99
 #-Wall -Wextra  # add these to cflags for verbose warnings
 BIN=sfs
