@@ -2,6 +2,8 @@
 
 This assignment is a simulation of a file system.
 
+I abided the Loyola Honor code.o
+
 # Student notes
 ## Working
 The parts that have been added and work correctly:
