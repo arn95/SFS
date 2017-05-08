@@ -1,0 +1,55 @@
+CS466 Assignment 4 GradeSheet
+Grade: 135/100
+Lines that start with '*' are comments on requirements for that section
+Lines that start with '-' are comments about your implementation
+
+20/20 Required: Opening an existing file
+* edits sfs_open to deal with the existing file case by finding the file's data
+* edits sfs_find_dir_entry to deal with existing file case
+* edits sfs_read_dir_entry to read a single entry and return
+
+18/20 Required: More than 1 directory in FS
+* adds ability to create a new directory
+* edits sfs_find_dir_entry to be able to loop through directories
+- you shouldn't create every directory in the path, they could already exist. Recall that you need the full path to be able to find the parent.
+
+8/10 Option: Seek
+* handles all 3 cases
+* checks that it doesn't go past end of file
+* returns error code if can't seek to location, or zero otherwise.
+- doesn't check that the location is possible before seeking to it
+
+25/35 Option: Directory has more than 1 file in it
+* read_dir_entry updated to correctly find the given directory entry and store it in the dir parameter. Returns error code.
+* create_dir_entry updated to correctly find a blank directory entry in the directory's data block, and then adds the given information to that entry. Updates the directory's inode as needed.
+- the maxed number of entries in a directory is based off of the used data, not the blocks, as every block is likely not full
+
+35/35 Option: Converting file system to use bitmap
+* getting free blocks for data and inodes updated
+* assumptions throughout code of how blocks are numbered are fixed
+- thank you for using google appropriately and citing it
+
+0/15 Option: Removing files
+* code added to sfs_rm to remove the file.
+* changes include deleting the inode data
+* changes include editing the directory entry to be blank
+* changes include editing the bitmaps if that options was implemented
+- not attempted
+
+15/30 Option: Allow files to use more than 1 block
+* directory read can handle > 1 block
+* directory write can handle > 1 block
+* file read can handle > 1 block
+* file write can handle > 1 block
+- offset is not calculated correctly in read_dir_entry. It should ideally, just do a mod like you did a division to get the block number.
+- in sfs_write, can't change the offset to suit your needs. You need to write at the user's intended offset. Can you imagine if you called fwrite and instead of writing where you wanted it to in the file, it decided to write at the end?
+- in sfs_write, you need to compare the end of the write from the offset, not from the start, to determine if more blocks are needed
+- in sfs_read, need to ensure that you are reading from the correct block based on the offset. Your code assumes it starts reading at block 0, but that may not be true.
+
+0/15 Option: Saving a copy of the disk's contents to a real file, with load
+* modified sfs_mount to load from a given file
+* modified sfs_dump to write the contents of the disk to a file
+- not attempted
+
+14/15: README contains all necessary information, good code practices followed, and comments are helpful
+- it is most helpful to have comments that show the overall structure, as opposed to comments about individual lines
